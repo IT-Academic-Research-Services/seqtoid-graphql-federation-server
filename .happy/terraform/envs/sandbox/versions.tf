@@ -18,7 +18,7 @@ terraform {
     key     = "terraform/seqtoid-graphql/envs/sandbox/stack/happy.tfstate"
     encrypt = true
     region  = "us-west-2"
-    profile = "default"
+    //profile = "default"
   }
   required_version = ">= 1.3"
 }
