@@ -13,5 +13,12 @@ terraform {
       version = ">= 3.20.0"
     }
   }
+  backend "s3" {
+    bucket = "tfstate-941377154785-test"
+    key     = "terraform/seqtoid-graphql/envs/sandbox/stack/happy.tfstate"
+    encrypt = true
+    region  = "us-west-2"
+    profile = "default"
+  }
   required_version = ">= 1.3"
 }
