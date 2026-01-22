@@ -6,8 +6,6 @@
  */
 
 export const formatUrlParams = (params: { [s: string]: unknown }) => {
-  console.log(`TBD:formatUrlParams`);
-
   const replaceSpaces = (value: string) => {
     const safeString = value.split(" ").join("+");
     return safeString;

@@ -19,8 +19,6 @@ export const get = async ({
   securityToken?: string;
 }) => {
   try {
-    console.log(`TBD:httpUtils::get`);
-
     const nextGenEnabled = await shouldReadFromNextGen(context);
     const shouldQueryNextGen = nextGenEnabled && serviceType;
     if (shouldQueryNextGen) {
@@ -59,8 +57,6 @@ export const postWithCSRF = async ({
   context: any;
 }) => {
   try {
-    console.log(`TBD:postWithCSRF`);
-
     const response = await fetch(process.env.API_URL + url, {
       method: "POST",
       headers: {

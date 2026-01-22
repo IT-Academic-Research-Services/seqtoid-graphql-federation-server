@@ -8,20 +8,20 @@ variable "aws_account_id" {
   description = "AWS account ID to apply changes to"
 }
 
-variable "aws_role" {
-  type        = string
-  description = "Name of the AWS role to assume to apply changes"
-}
+# variable "aws_role" {
+#   type        = string
+#   description = "Name of the AWS role to assume to apply changes"
+# }
 
 variable "env" {
   type        = string
   description = "Environment name"
 }
 
-variable "happymeta_" {
-  type        = string
-  description = "Happy Path metadata. Ignored by actual terraform."
-}
+# variable "happymeta_" {
+#   type        = string
+#   description = "Happy Path metadata. Ignored by actual terraform."
+# }
 
 variable "image_tag" {
   type        = string

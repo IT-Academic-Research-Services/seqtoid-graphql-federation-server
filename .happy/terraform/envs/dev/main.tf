@@ -1,5 +1,5 @@
 locals {
-  alb_name         = "czid-dev-web" //module.secrets.values.alb_name
+  alb_name         = "czid-${var.env}-web" //module.secrets.values.alb_name
   service_type     = "TARGET_GROUP_ONLY" //var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
   routing_config   = {
     "INTERNAL" = {},
@@ -11,20 +11,7 @@ locals {
       }
     }
   }
-  image_uri = "491013321714.dkr.ecr.us-west-2.amazonaws.com/seqtoid-gql/dev/gql-federation"
-}
-
-terraform {
-  required_version = ">= 1.3"
-
-  backend "s3" {
-    bucket  = "tfstate-491013321714-test"
-    key = "graphql.tfstate"
-    # key="terraform/seqtoid-graphql/envs/dev/stack/happy.tfstate"
-    # encrypt        = true
-    region  = "us-west-2"
-    profile = "idseq-newdev"
-  }
+  image_uri = "${var.aws_account_id}.dkr.ecr.us-west-2.amazonaws.com/seqtoid-gql/${var.env}/gql-federation"
 }
 
 # module "secrets" {
@@ -48,9 +35,9 @@ module "stack" {
   k8s_namespace    = var.k8s_namespace
   app_name         = var.app
   additional_env_vars = {
-    # API_URL = "https://dev.seqtoid.org" http or https?
-    # API_URL = "http://dev.seqtoid.org:4444"
-    API_URL = "https://dev.seqtoid.org"
+    # API_URL = "https://${var.env}.seqtoid.org" http or https?
+    # API_URL = "http://${var.env}.seqtoid.org:4444"
+    API_URL = "https://${var.env}.seqtoid.org"
     # NEXTGEN_ENTITIES_URL = "http://ryan-test-entities.czid-dev-happy-happy-env.svc.cluster.local:8008"
     # NEXTGEN_WORKFLOWS_URL = "http://workflows.czidnet"
   }
