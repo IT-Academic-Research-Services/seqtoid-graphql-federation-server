@@ -14,8 +14,6 @@ locals {
       }
     }
   }
-  # image_uri = "030998640247.dkr.ecr.us-west-2.amazonaws.com/seqtoid-gql/staging/gql-federation"
-  #seqtoid/staging/graphql-federation
 }
 
 # module "secrets" {
@@ -38,9 +36,17 @@ module "stack" {
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
   k8s_namespace    = var.k8s_namespace
+  additional_env_vars = {
+    # API_URL = "http://${var.env}.seqtoid.org:4444"
+    API_URL = "https://${var.env}.seqtoid.org"
+    # NEXTGEN_ENTITIES_URL = "http://ryan-test-entities.czid-dev-happy-happy-env.svc.cluster.local:8008"
+    # NEXTGEN_WORKFLOWS_URL = "http://workflows.czidnet"
+  }
+
   services = {
     gql = merge(local.routing_config[local.service_type], {
       name                  = "graphql-federation"
+      #desired_count         = 1 # TODO: Normally unset
       port                  = "4444"
       memory                = "1500Mi"
       cpu                   = "1500m"
@@ -51,11 +57,14 @@ module "stack" {
       // PRIVATE - cluster IP only, no ALB at all
       // TARGET_GROUP_ONLY - Only create a target group for use with an existing ALB
       service_type          = local.service_type
-      platform_architecture = "amd64"
+      platform_architecture = "amd64" # TODO: Was arm64
 
       # additional_env_vars_from_secrets = {
       #   items = ["integration-secret"]
       # }
     })
   }
+
+  # tasks = {
+  # }
 }
