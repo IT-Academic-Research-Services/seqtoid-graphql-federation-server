@@ -17,7 +17,7 @@ terraform {
     bucket = "tfstate-491013321714-test"
     key    = "graphql.tfstate"
     # key="terraform/seqtoid-graphql/envs/dev/stack/happy.tfstate"
-    # encrypt        = true
+    encrypt        = true
     region  = "us-west-2"
     profile = "idseq-newdev"
   }

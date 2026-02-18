@@ -20,5 +20,5 @@ terraform {
     region  = "us-west-2"
     profile = "idseq-staging"
   }
-  required_version = "1.14.3"
+  required_version = ">= 1.3"
 }

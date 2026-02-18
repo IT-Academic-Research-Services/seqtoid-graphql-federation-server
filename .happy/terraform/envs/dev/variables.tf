@@ -29,7 +29,7 @@ variable "env" {
 variable "image_tag" {
   type        = string
   description = "Please provide an image tag"
-  default = "v5" # TODO: Change this when redeploying the GraphqlServer Image with a new version
+  default     = "v2" # TODO: Change this when redeploying the GraphqlServer Image with a new version
 }
 
 variable "image_tags" {
@@ -41,13 +41,13 @@ variable "image_tags" {
 variable "k8s_cluster_id" {
   type        = string
   description = "EKS K8S Cluster ID"
-  default = "czid-dev-eks"
+  default     = "czid-dev-eks"
 }
 
 variable "k8s_namespace" {
   type        = string
   description = "K8S namespace for this stack"
-  default = "czid-dev-happy-happy-env"
+  default     = "idseq-dev-happy-happy-env"
 }
 
 variable "stack_name" {

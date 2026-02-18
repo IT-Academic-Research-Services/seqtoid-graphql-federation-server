@@ -1,7 +1,8 @@
 locals {
-  alb_name         = "czid-${var.env}-web" //module.secrets.values.alb_name
-  service_type     = "TARGET_GROUP_ONLY" //var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
-  routing_config   = {
+  # magic_stack_name = module.secrets.values.magic_stack_name
+  alb_name     = "idseq-${var.env}-web" # module.secrets.values.alb_name
+  service_type = "TARGET_GROUP_ONLY"    # var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
+  routing_config = {
     "INTERNAL" = {},
     "TARGET_GROUP_ONLY" = {
       path = "/graphqlfed*",
@@ -11,31 +12,32 @@ locals {
       }
     }
   }
-  image_uri = "${var.aws_account_id}.dkr.ecr.us-west-2.amazonaws.com/seqtoid-gql/${var.env}/gql-federation"
+  # image_uri = "${var.aws_account_id}.dkr.ecr.us-west-2.amazonaws.com/seqtoid-gql/${var.env}/gql-federation"
 }
 
 # module "secrets" {
-#   source = "github.com/chanzuckerberg/cztack//aws-ssm-params?ref=v0.40.0"
+#   source = "github.com/chanzuckerberg/cztack//aws-ssm-params?ref=v0.104.2"
 #
-#   project = "czid"
+#   project = "idseq"
 #   env     = "dev"
 #   service = "graphql-federation"
 #
-#   parameters = ["integration-secret"]
+#   parameters = ["magic_stack_name", "alb_name"]
 # }
 
 module "stack" {
-  source           = "../../modules/happy-stack-eks"
-  image_tag        = var.image_tag
-  image_tags       = jsondecode(var.image_tags)
-  image_uri        = local.image_uri
+  # source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=v0.128.8"
+  source     = "../../modules/happy-stack-eks"
+  image_tag  = var.image_tag
+  image_tags = jsondecode(var.image_tags)
+  # image_uri        = local.image_uri
   stack_name       = var.stack_name
   deployment_stage = var.env
   stack_prefix     = "/${var.stack_name}"
   k8s_namespace    = var.k8s_namespace
   app_name         = var.app
+  # skip_config_injection = true
   additional_env_vars = {
-    # API_URL = "https://${var.env}.seqtoid.org" http or https?
     # API_URL = "http://${var.env}.seqtoid.org:4444"
     API_URL = "https://${var.env}.seqtoid.org"
     # NEXTGEN_ENTITIES_URL = "http://ryan-test-entities.czid-dev-happy-happy-env.svc.cluster.local:8008"
@@ -44,9 +46,9 @@ module "stack" {
 
   services = {
     gql = merge(local.routing_config[local.service_type], {
-      # name                  = "graphql-federation"
-      name              = "gql-federation",
-      desired_count    = 1
+      # name                  = "gql-federation"
+      name                  = "graphql-federation"
+      desired_count         = 1
       port                  = "4444"
       memory                = "1024Mi"
       memory_requests       = "1024Mi"
@@ -61,9 +63,9 @@ module "stack" {
       service_type          = local.service_type
       platform_architecture = "amd64" # TODO: Was arm64
 
-      additional_env_vars_from_secrets = {
-        items = ["integration-secret"]
-      }
+      # additional_env_vars_from_secrets = {
+      #   items = ["integration-secret"]
+      # }
     })
   }
 
