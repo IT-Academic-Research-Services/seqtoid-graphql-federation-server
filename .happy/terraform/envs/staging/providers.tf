@@ -3,7 +3,7 @@ provider "aws" {
   # assume_role {
   #   role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_role}"
   # }
-  profile = "idseq-staging"
+  profile             = "idseq-staging"
   allowed_account_ids = [var.aws_account_id]
 }
 
@@ -28,13 +28,13 @@ data "aws_eks_cluster_auth" "cluster" {
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  # exec {
-  #   api_version = "client.authentication.k8s.io/v1beta1"
-  #   command     = "aws"
-  #   args = ["eks", "get-token", "--cluster-name", var.k8s_cluster_id, "--profile", "idseq-staging"]
-  # }
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
+  # token                  = data.aws_eks_cluster_auth.cluster.token
+  exec {
+    api_version = "client.authentication.k8s.io/v1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", var.k8s_cluster_id, "--profile", "idseq-staging"]
+  }
 }
 
 data "kubernetes_namespace" "happy-namespace" {
@@ -43,12 +43,12 @@ data "kubernetes_namespace" "happy-namespace" {
   }
 }
 
-data "kubernetes_secret" "integration_secret" {
-  metadata {
-    name      = "integration-secret"
-    namespace = var.k8s_namespace
-  }
-}
+# data "kubernetes_secret" "integration_secret" {
+#   metadata {
+#     name      = "integration-secret"
+#     namespace = var.k8s_namespace
+#   }
+# }
 
 # data "aws_ssm_parameter" "dd_app_key" {
 #   name     = "/shared-infra-prod-datadog/app_key"

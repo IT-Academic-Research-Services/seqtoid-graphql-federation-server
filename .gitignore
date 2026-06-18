@@ -9,4 +9,6 @@ dist/
 /.ruby-version
 .terraform.lock.hcl
 .terraform/
-#.terraform.dev/
+.terraform.dev/
+.terraform.staging/
+.terraform.prod/

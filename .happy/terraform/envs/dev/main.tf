@@ -26,7 +26,7 @@ locals {
 # }
 
 module "stack" {
-  # source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=v0.128.8"
+  # source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=v0.127.5"
   source     = "../../modules/happy-stack-eks"
   image_tag  = var.image_tag
   image_tags = jsondecode(var.image_tags)
@@ -42,7 +42,8 @@ module "stack" {
     API_URL = "https://${var.env}.seqtoid.org"
     # NEXTGEN_ENTITIES_URL = "http://ryan-test-entities.czid-dev-happy-happy-env.svc.cluster.local:8008"
     # NEXTGEN_WORKFLOWS_URL = "http://workflows.czidnet"
-    FORK = 2 # TODO: Might help with OOM errors
+    FORK  = 2 # TODO: setting this to 2 might help with OOM errors
+    DEBUG = 1
   }
 
   services = {
@@ -51,8 +52,8 @@ module "stack" {
       name                  = "graphql-federation"
       desired_count         = 1
       port                  = "4444"
-      memory                = "8Gi" # TODO: was 1024Mi; might help with OOM errors
-      memory_requests       = "4Gi" # TODO: was 1024Mi; might help with OOM errors
+      memory                = "8Gi"   # TODO: was 1024Mi; might help with OOM errors
+      memory_requests       = "4Gi"   # TODO: was 1024Mi; might help with OOM errors
       cpu                   = "4000m" # TODO: was 500m; might help with OOM errors
       cpu_requests          = "1000m" # TODO: was 500m; might help with OOM errors
       initial_delay_seconds = "120"

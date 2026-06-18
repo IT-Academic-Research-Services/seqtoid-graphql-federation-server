@@ -12,14 +12,18 @@ terraform {
       source  = "datadog/datadog"
       version = ">= 3.20.0"
     }
+    happy = {
+      source  = "chanzuckerberg/happy"
+      version = ">= 0.127.5"
+    }
   }
   backend "s3" {
     bucket = "tfstate-491013321714-test"
     key    = "graphql.tfstate"
     # key="terraform/seqtoid-graphql/envs/dev/stack/happy.tfstate"
-    encrypt        = true
+    encrypt = true
     region  = "us-west-2"
-    profile = "idseq-newdev"
+    profile = "idseq-dev"
   }
   required_version = ">= 1.3"
 }

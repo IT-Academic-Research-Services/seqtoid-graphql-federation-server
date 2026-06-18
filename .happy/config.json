@@ -10,7 +10,7 @@
     ],
     "environments": {
         "sandbox": {
-            "aws_profile": "idseq-dev",
+            "aws_profile": "idseq-sandbox",
             "terraform_directory": ".happy/terraform/envs/sandbox",
             "log_group_prefix": "/happy/czid/sandbox",
             "auto_run_migrations": true,
@@ -23,7 +23,7 @@
             }
         },
         "dev": {
-            "aws_profile": "idseq-newdev",
+            "aws_profile": "idseq-dev",
             "terraform_directory": ".happy/terraform/envs/dev",
             "log_group_prefix": "/happy/idseq/dev",
             "auto_run_migrations": true,
