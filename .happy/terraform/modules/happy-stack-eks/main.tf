@@ -185,7 +185,7 @@ module "services" {
   health_check_command             = each.value.health_check_command
   k8s_namespace                    = var.k8s_namespace
   cloud_env                        = local.secret["cloud_env"]
-  certificate_arn                  = "" //local.secret["certificate_arn"]
+  certificate_arn                  = local.secret["certificate_arn"]
   deployment_stage                 = var.deployment_stage
   service_endpoints                = local.service_endpoints
   aws_iam                          = each.value.aws_iam
@@ -230,6 +230,7 @@ module "services" {
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, each.value.additional_env_vars)
+  #additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
@@ -269,4 +270,3 @@ module "services" {
 #   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
 #   additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
 # }
-
