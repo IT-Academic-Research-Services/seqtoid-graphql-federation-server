@@ -1,0 +1,64 @@
+name: SeqToID GraphQL Federation Server Terraform Deploy
+run-name: Deploy SeqToID GraphQL Federation Server to ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to which to deploy'
+        required: true
+        type: string
+        default: 'sandbox'
+      image_tag:
+        description: 'The image tag to deploy'
+        required: true
+        type: string
+        default: 'latest'
+      profile-name:
+        description: 'The profile name to use'
+        required: true
+        type: string
+        default: 'default'
+
+env:
+  AWS_REGION : us-west-2
+  DEPLOYMENT_ENVIRONMENT: ${{ inputs.environment }}
+  TF_VAR_image_tag: ${{ inputs.image_tag }}
+  TF_CLI_ARGS_apply: "--auto-approve"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  DeployTerraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::941377154785:role/gha-seqtoid
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Setup Profile
+        shell: bash
+        run: |
+            aws configure set region us-west-2 --profile ${{ inputs.profile-name }}
+            aws configure set aws_access_key_id ${{ env.AWS_ACCESS_KEY_ID }} --profile ${{ inputs.profile-name }}
+            aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile ${{ inputs.profile-name }}
+            aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ inputs.profile-name }}
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity --profile ${{ inputs.profile-name }}
+      - name: Set up runner
+        run: source scripts/init_cd_runner.sh
+      - name: Terraform Init
+        run: |
+          cd .happy/terraform/envs/${{ env.DEPLOYMENT_ENVIRONMENT }}
+          terraform init
+      - name: Terraform Apply
+        run: |
+          cd .happy/terraform/envs/${{ env.DEPLOYMENT_ENVIRONMENT }}
+          terraform apply

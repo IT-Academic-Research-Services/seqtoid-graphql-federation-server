@@ -27,3 +27,5 @@ docker-compose.yml
 node_modules
 LICENSE
 README.md
+/.idea
+*.iml

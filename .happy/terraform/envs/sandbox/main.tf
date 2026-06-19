@@ -1,7 +1,7 @@
 locals {
-  magic_stack_name = module.secrets.values.magic_stack_name
-  alb_name         = module.secrets.values.alb_name
-  service_type     = var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
+  //magic_stack_name = module.secrets.values.magic_stack_name
+  alb_name         = "czid-sandbox-web" //module.secrets.values.alb_name
+  service_type     = "TARGET_GROUP_ONLY" //var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
   routing_config   = {
     "INTERNAL" = {},
     "TARGET_GROUP_ONLY" = {
@@ -14,33 +14,37 @@ locals {
   }
 }
 
-module "secrets" {
-  source = "github.com/chanzuckerberg/cztack//aws-ssm-params?ref=v0.40.0"
+# module "secrets" {
+#   source = "github.com/chanzuckerberg/cztack//aws-ssm-params?ref=v0.40.0"
 
-  project = "czid"
-  env     = "sandbox"
-  service = "graphql-federation"
+#   project = "czid"
+#   env     = "sandbox"
+#   service = "graphql-federation"
 
-  parameters = ["magic_stack_name", "alb_name"]
-}
+#   parameters = ["magic_stack_name", "alb_name"]
+# }
 
 module "stack" {
-  source           = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=happy-stack-eks-v4.27.1"
+  source           = "../../modules/happy-stack-eks"
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  image_uri        = "941377154785.dkr.ecr.us-west-2.amazonaws.com/seqtoid-graphql"
   stack_name       = var.stack_name
   deployment_stage = var.env
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
   k8s_namespace    = var.k8s_namespace
+  additional_env_vars = {
+    API_URL = "https://sandbox.seqtoid.org"
+  }
   services = {
     gql = merge(local.routing_config[local.service_type], {
       name                  = "graphql-federation"
       port                  = "4444"
-      memory                = "8000Mi"
-      memory_requests       = "8000Mi"
-      cpu                   = "3000m"
-      cpu_requests          = "3000m"
+      memory                = "1024Mi"
+      memory_requests       = "1024Mi"
+      cpu                   = "500m"
+      cpu_requests          = "500m"
       initial_delay_seconds = "120"
       health_check_path     = "/health"
       // INTERNAL - OIDC protected ALB
