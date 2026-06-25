@@ -29,7 +29,7 @@ variable "env" {
 variable "image_tag" {
   type        = string
   description = "Please provide an image tag"
-  default     = "v1" # TODO: Change this when redeploying the GraphqlServer Image with a new version
+  # default     = "v1" # TODO: Change this when redeploying the GraphqlServer Image with a new version
 }
 
 variable "image_tags" {

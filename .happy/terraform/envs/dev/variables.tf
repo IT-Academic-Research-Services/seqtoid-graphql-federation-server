@@ -53,5 +53,5 @@ variable "k8s_namespace" {
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
-  default = "seqtoid-gql"
+  default     = "seqtoid-gql"
 }

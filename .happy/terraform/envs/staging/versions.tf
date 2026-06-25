@@ -12,6 +12,10 @@ terraform {
       source  = "datadog/datadog"
       version = ">= 3.20.0"
     }
+    happy = {
+      source  = "chanzuckerberg/happy"
+      version = ">= 0.127.5"
+    }
   }
   backend "s3" {
     bucket  = "tfstate-030998640247"

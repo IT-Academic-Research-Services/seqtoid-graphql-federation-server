@@ -1,7 +1,7 @@
 locals {
   # magic_stack_name = module.secrets.values.magic_stack_name
-  alb_name     = "idseq-${var.env}-web" // module.secrets.values.alb_name
-  service_type = "TARGET_GROUP_ONLY"    // var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
+  alb_name     = "idseq-${var.env}-web" # module.secrets.values.alb_name
+  service_type = "TARGET_GROUP_ONLY"    # var.stack_name == local.magic_stack_name ? "TARGET_GROUP_ONLY" : "INTERNAL"
   routing_config = {
     "INTERNAL" = {},
     "TARGET_GROUP_ONLY" = {
@@ -25,7 +25,7 @@ locals {
 # }
 
 module "stack" {
-  # source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=v0.128.8"
+  # source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=v0.127.5"
   source           = "../../modules/happy-stack-eks"
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
@@ -40,6 +40,8 @@ module "stack" {
     API_URL = "https://${var.env}.seqtoid.org"
     # NEXTGEN_ENTITIES_URL = "http://ryan-test-entities.czid-dev-happy-happy-env.svc.cluster.local:8008"
     # NEXTGEN_WORKFLOWS_URL = "http://workflows.czidnet"
+    FORK  = 2 # TODO: setting this to 2 might help with OOM errors
+    DEBUG = 1
   }
 
   services = {
@@ -47,8 +49,10 @@ module "stack" {
       name                  = "graphql-federation"
       desired_count         = 1 # TODO: Normally unset
       port                  = "4444"
-      memory                = "1500Mi"
-      cpu                   = "1500m"
+      memory                = "8Gi"   # TODO: was 1024Mi; might help with OOM errors
+      memory_requests       = "4Gi"   # TODO: was 1024Mi; might help with OOM errors
+      cpu                   = "4000m" # TODO: was 500m; might help with OOM errors
+      cpu_requests          = "1000m" # TODO: was 500m; might help with OOM errors
       initial_delay_seconds = "120"
       health_check_path     = "/health"
       // INTERNAL - OIDC protected ALB
@@ -58,9 +62,9 @@ module "stack" {
       service_type          = local.service_type
       platform_architecture = "amd64" # TODO: Was arm64
 
-      # additional_env_vars_from_secrets = {
-      #   items = ["integration-secret"]
-      # }
+      additional_env_vars_from_secrets = {
+        items = ["integration-secret"]
+      }
     })
   }
 

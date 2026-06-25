@@ -3,7 +3,7 @@ provider "aws" {
   # assume_role {
   #   role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_role}"
   # }
-  profile             = "idseq-staging"
+  profile             = "idseq-${var.env}"
   allowed_account_ids = [var.aws_account_id]
 }
 
@@ -14,8 +14,8 @@ provider "aws" {
 #   assume_role {
 #     role_arn = "arn:aws:iam::626314663667:role/tfe-si"
 #   }
-#
-#   allowed_account_ids = ["626314663667"]
+#   profile = "idseq-${var.env}"
+#   allowed_account_ids = ["626314663667", var.aws_account_id]
 # }
 
 data "aws_eks_cluster" "cluster" {
@@ -33,7 +33,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1"
     command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", var.k8s_cluster_id, "--profile", "idseq-staging"]
+    args        = ["eks", "get-token", "--cluster-name", var.k8s_cluster_id, "--profile", "idseq-${var.env}"]
   }
 }
 
